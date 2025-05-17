@@ -43,7 +43,7 @@ public class InMemoryOrderRepository implements OrderRepository {
         return orders.values().stream().toList();
     }
 
-    private Comparator<OrderStatus> getStatusComparator() {
+    Comparator<OrderStatus> getStatusComparator() {
         return Comparator.comparingInt(status -> switch (status) {
             case PRONTO -> 1;
             case EM_PREPARO -> 2;

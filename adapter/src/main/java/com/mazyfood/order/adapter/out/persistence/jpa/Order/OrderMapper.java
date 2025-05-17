@@ -28,6 +28,7 @@ final class OrderMapper {
         orderProductJpaEntity.setOrder(orderJpaEntity);
         orderProductJpaEntity.setProductId(orderProduct.getProductId());
         orderProductJpaEntity.setProductName(orderProduct.getProductName());
+        orderProductJpaEntity.setPrice(orderProduct.getPrice());
         orderProductJpaEntity.setQuantity(orderProduct.getQuantity());
         return orderProductJpaEntity;
     }
@@ -42,10 +43,10 @@ final class OrderMapper {
         order.setStatus(jpaEntity.getStatus());
         for (OrderProductJpaEntity orderProductJpaEntity : jpaEntity.getProducts()) {
             order.addProduct(
-                orderProductJpaEntity.getProductId(),
-                orderProductJpaEntity.getProductName(),
-                orderProductJpaEntity.getPrice(),
-                orderProductJpaEntity.getQuantity()
+                    orderProductJpaEntity.getProductId(),
+                    orderProductJpaEntity.getProductName(),
+                    orderProductJpaEntity.getPrice(),
+                    orderProductJpaEntity.getQuantity()
             );
         }
         return order;

@@ -43,7 +43,7 @@ public class OrderController {
         try {
             order = getOrderUseCase.getOrder(orderId).get();
         } catch (OrderNotFoundException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(OrderResponse.fromDomain(order));
     }

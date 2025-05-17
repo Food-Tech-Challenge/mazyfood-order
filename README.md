@@ -17,9 +17,11 @@ Tech Challenge Fast Food desenvolvido no curso de Pós-Graduação em Arquitetur
 
 ## Sobre o Projeto
 
-O **MAZYFood Order** é um microsserviço desenvolvido em **Spring Boot**, seguindo o padrão de **Arquitetura Hexagonal** para
+O **MAZYFood Order** é um microsserviço desenvolvido em **Spring Boot**, seguindo o padrão de **Arquitetura Hexagonal**
+para
 garantir maior desacoplamento e facilidade de manutenção. Além da API em Spring Boot, o projeto utiliza o banco de dados
-**PostgreSQL** e filas **SQS**. Este projeto tem como objetivo oferecer uma base sólida para estudos e aplicação prática de conceitos
+**PostgreSQL** e filas **SQS**. Este projeto tem como objetivo oferecer uma base sólida para estudos e aplicação prática
+de conceitos
 avançados em arquitetura de software com foco em microsserviços.
 
 ---
@@ -29,7 +31,8 @@ avançados em arquitetura de software com foco em microsserviços.
 - **Java** (Spring Boot): Framework para construção de aplicações robustas e escaláveis.
 - **Docker**: Ferramenta de containerização para garantir a portabilidade e consistência do ambiente.
 - **PostgreSQL**: Banco de dados relacional utilizado para persistência de dados.
-- **SQS**: Serviço de fila da AWS utilizado para desacoplamento entre componentes da aplicação, garantindo comunicação assíncrona, escalabilidade e maior resiliência no processamento de mensagens.
+- **SQS**: Serviço de fila da AWS utilizado para desacoplamento entre componentes da aplicação, garantindo comunicação
+  assíncrona, escalabilidade e maior resiliência no processamento de mensagens.
 - **Arquitetura Hexagonal**: Padrão arquitetural focado em modularidade e independência de tecnologias externas.
 - **Swagger/OpenAPI**: Ferramenta para documentação interativa e testes das APIs.
 - **Minikube**: Ferramenta para executar clusters Kubernetes localmente.
@@ -46,7 +49,8 @@ Antes de começar, certifique-se de ter as seguintes ferramentas instaladas em s
 - **Minikube**: Para executar clusters Kubernetes localmente.
 - **Kubectl**: Para gerenciar os recursos do cluster Kubernetes.
 - **Helm**: Para gerenciar os pacotes Kubernetes.
-- **Localstack**: Ambiente local que simula serviços da AWS, permitindo o desenvolvimento e testes de integrações com recursos como SQS, S3 e outros, sem necessidade de acesso à nuvem real.
+- **Localstack**: Ambiente local que simula serviços da AWS, permitindo o desenvolvimento e testes de integrações com
+  recursos como SQS, S3 e outros, sem necessidade de acesso à nuvem real.
 
 ---
 

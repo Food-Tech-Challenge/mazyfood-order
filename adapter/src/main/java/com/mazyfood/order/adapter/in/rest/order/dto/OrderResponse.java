@@ -4,7 +4,6 @@ import com.mazyfood.order.model.order.Order;
 import com.mazyfood.order.model.order.OrderStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 public record OrderResponse(int id, OrderStatus orderStatus, int customerId,
                             List<OrderProductInListWebModel> products) {
