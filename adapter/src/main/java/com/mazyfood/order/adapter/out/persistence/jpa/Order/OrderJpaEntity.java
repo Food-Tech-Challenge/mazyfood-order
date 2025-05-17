@@ -25,4 +25,7 @@ public class OrderJpaEntity {
     @Column(nullable = false)
     private OrderStatus status;
 
+    public boolean hasProducts() {
+        return products != null && !products.isEmpty();
+    }
 }

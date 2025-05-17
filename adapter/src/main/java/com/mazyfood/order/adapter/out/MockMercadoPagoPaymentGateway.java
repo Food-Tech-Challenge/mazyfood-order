@@ -11,11 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@ConditionalOnProperty(name = "paymentGateway", havingValue = "mock", matchIfMissing = true)
 @Component
+@ConditionalOnProperty(name = "paymentGateway", havingValue = "mock", matchIfMissing = true)
 public class MockMercadoPagoPaymentGateway implements PaymentGateway {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public MockMercadoPagoPaymentGateway(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public boolean authorizePayment(OrderId orderId, String targetUrl) {

@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-
 @Entity
 @Table(name = "order_products")
 public class OrderProductJpaEntity {
@@ -29,4 +28,7 @@ public class OrderProductJpaEntity {
     @Column(nullable = false)
     private int quantity;
 
+    public boolean isQuantityPositive() {
+        return quantity > 0;
+    }
 }

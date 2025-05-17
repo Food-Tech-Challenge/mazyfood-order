@@ -3,46 +3,86 @@ package com.mazyfood.order.adapter.out.persistence.jpa.Order;
 import com.mazyfood.order.model.order.OrderStatus;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class OrderJpaEntityTest {
 
     @Test
-    void testSettersAndGetters() {
-        OrderJpaEntity entity = new OrderJpaEntity();
+    void testAllFieldsAndRelationships() {
+        OrderJpaEntity orderEntity = new OrderJpaEntity();
 
-        entity.setId(10);
-        entity.setCustomerId(123);
-        entity.setStatus(OrderStatus.EM_PREPARO);
+        // Set basic fields
+        orderEntity.setId(100);
+        orderEntity.setCustomerId(123);
+        orderEntity.setStatus(OrderStatus.PRONTO);
 
+        assertEquals(100, orderEntity.getId());
+        assertEquals(123, orderEntity.getCustomerId());
+        assertEquals(OrderStatus.PRONTO, orderEntity.getStatus());
+
+        // Setup related product entities
         OrderProductJpaEntity product1 = new OrderProductJpaEntity();
         product1.setProductId(1);
-        product1.setProductName("Refri");
+        product1.setProductName("Pizza");
         product1.setQuantity(2);
-        product1.setPrice(null);
-        product1.setOrder(entity);
+        product1.setPrice(new BigDecimal("30.00"));
+        product1.setOrder(orderEntity);
 
         OrderProductJpaEntity product2 = new OrderProductJpaEntity();
         product2.setProductId(2);
-        product2.setProductName("Pizza");
+        product2.setProductName("Refri");
         product2.setQuantity(1);
-        product2.setPrice(null);
-        product2.setOrder(entity);
+        product2.setPrice(new BigDecimal("7.00"));
+        product2.setOrder(orderEntity);
 
-        entity.setProducts(List.of(product1, product2));
+        // Link products to order
+        orderEntity.setProducts(List.of(product1, product2));
 
-        assertEquals(10, entity.getId());
-        assertEquals(123, entity.getCustomerId());
-        assertEquals(OrderStatus.EM_PREPARO, entity.getStatus());
-
-        List<OrderProductJpaEntity> products = entity.getProducts();
+        List<OrderProductJpaEntity> products = orderEntity.getProducts();
         assertNotNull(products);
         assertEquals(2, products.size());
-        assertEquals("Refri", products.get(0).getProductName());
-        assertEquals("Pizza", products.get(1).getProductName());
-        assertEquals(entity, products.get(0).getOrder());
+
+        // Check reverse relationship
+        assertEquals(orderEntity, products.get(0).getOrder());
+        assertEquals("Pizza", products.get(0).getProductName());
+        assertEquals("Refri", products.get(1).getProductName());
+    }
+
+
+    @Test
+    void testHasProductsTrue() {
+        OrderJpaEntity order = new OrderJpaEntity();
+        order.setId(1);
+        order.setCustomerId(123);
+        order.setStatus(OrderStatus.RECEBIDO);
+
+        OrderProductJpaEntity product = new OrderProductJpaEntity();
+        product.setProductId(1);
+        product.setProductName("Pizza");
+        product.setQuantity(2);
+        product.setOrder(order);
+
+        order.setProducts(List.of(product));
+
+        assertTrue(order.hasProducts());
+    }
+
+    @Test
+    void testHasProductsFalseWhenNull() {
+        OrderJpaEntity order = new OrderJpaEntity();
+        order.setProducts(null);
+
+        assertFalse(order.hasProducts());
+    }
+
+    @Test
+    void testHasProductsFalseWhenEmpty() {
+        OrderJpaEntity order = new OrderJpaEntity();
+        order.setProducts(List.of());
+
+        assertFalse(order.hasProducts());
     }
 }
