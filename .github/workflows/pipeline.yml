@@ -29,8 +29,8 @@ jobs:
       - name: Build, Test and Generate JaCoCo Report
         id: jacoco
         run: |
-          mvn clean test jacoco:report
-          echo "report-path=target/site/jacoco/jacoco.xml" >> $GITHUB_OUTPUT
+          mvn clean verify
+          echo "report-path=bootstrap/target/jacoco-aggregate/jacoco.xml" >> $GITHUB_OUTPUT
 
   sonar-quality:
     name: SonarQube Analysis
