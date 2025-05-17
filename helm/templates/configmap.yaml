@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-config
+data:
+  SPRING_DATASOURCE_URL: "{{ .Values.database.url }}"
+  SPRING_DATASOURCE_USERNAME: "{{ .Values.database.username }}"
+  SPRING_DATASOURCE_DRIVER_CLASS_NAME: "{{ .Values.database.driverClassName }}"
+  SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: "{{ .Values.jpa.dialect }}"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "{{ .Values.jpa.ddlAuto }}"
+  SPRING_JPA_SHOW_SQL: "{{ .Values.jpa.showSql }}"
+  PERSISTENCE: "{{ .Values.custom.persistence }}"
+  PAYMENT_GATEWAY: "{{ .Values.custom.paymentGateway }}"

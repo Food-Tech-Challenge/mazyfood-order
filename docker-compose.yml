@@ -1,0 +1,12 @@
+services:
+  mazyfood-order:
+    hostname: order.mazyfood.localhost
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=postgresql
