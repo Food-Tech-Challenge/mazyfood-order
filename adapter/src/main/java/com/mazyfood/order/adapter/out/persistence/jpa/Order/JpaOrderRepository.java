@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@ConditionalOnProperty(name = "persistance", havingValue = "postgresql", matchIfMissing = true)
+@ConditionalOnProperty(name = "persistence", havingValue = "postgresql")
 @Repository
 public class JpaOrderRepository implements OrderRepository {
 

@@ -3,10 +3,7 @@ package com.mazyfood.order.adapter.in.rest.order;
 import com.mazyfood.order.adapter.in.rest.order.dto.CreateOrderRequest;
 import com.mazyfood.order.adapter.in.rest.order.dto.OrderInListWebModel;
 import com.mazyfood.order.adapter.in.rest.order.dto.OrderResponse;
-import com.mazyfood.order.application.port.in.order.CreateOrderUseCase;
-import com.mazyfood.order.application.port.in.order.GetAllOrdersUseCase;
-import com.mazyfood.order.application.port.in.order.GetOrderUseCase;
-import com.mazyfood.order.application.port.in.order.GetOrderedOrdersUseCase;
+import com.mazyfood.order.application.port.in.order.*;
 import com.mazyfood.order.model.order.Order;
 import com.mazyfood.order.model.order.OrderId;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +39,12 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable int id) {
         OrderId orderId = new OrderId(id);
-        Order order = getOrderUseCase.getOrder(orderId).get();
+        Order order = null;
+        try {
+            order = getOrderUseCase.getOrder(orderId).get();
+        } catch (OrderNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity.ok(OrderResponse.fromDomain(order));
     }
 
