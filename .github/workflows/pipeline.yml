@@ -1,0 +1,103 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+          cache: maven
+
+      - name: Build and Test Application
+        run: |
+          mvn test
+
+  build-and-push:
+    needs: unit-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        run: |
+          aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin \
+          $(aws sts get-caller-identity --query Account --output text).dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ vars.ECR_REPOSITORY }}:${{vars.IMAGE_TAG }} .
+
+      - name: Tag Docker Image
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          docker tag ${{ vars.ECR_REPOSITORY }}:${{vars.IMAGE_TAG }} $ACCOUNT_ID.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPOSITORY }}:${{vars.IMAGE_TAG }}
+
+      - name: Push Docker Image to Amazon ECR
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          docker push $ACCOUNT_ID.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPOSITORY }}:${{vars.IMAGE_TAG }}
+
+  deploy-eks:
+      needs: build-and-push
+      runs-on: ubuntu-latest
+    
+      steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v4
+    
+        - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v2
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+            aws-region: "${{ vars.AWS_REGION }}"
+    
+        - name: Install Kubectl
+          run: |
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            chmod +x kubectl
+            sudo mv kubectl /usr/local/bin/
+    
+        - name: Install Helm
+          run: |
+            curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+    
+        - name: Update kubeconfig
+          run: |
+            aws eks update-kubeconfig --region "${{ vars.AWS_REGION }}" --name "${{ vars.CLUSTER_NAME }}"
+    
+        - name: Deploy Application with Helm
+          run: |
+            helm upgrade --install "${{ vars.HELM_RELEASE_NAME }}" helm/ \
+              --set image.repository=$(aws sts get-caller-identity --query Account --output text).dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPOSITORY }} \
+              --set image.tag="${{ vars.IMAGE_TAG }}" \
+              --set database.url="${{ vars.DATABASE_URL }}" \
+              --set database.username="${{ secrets.DATABASE_USERNAME }}" \
+              --set database.password="${{ secrets.DATABASE_PASSWORD }}"
