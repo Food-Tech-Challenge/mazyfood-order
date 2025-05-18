@@ -43,23 +43,14 @@ jobs:
           distribution: 'corretto'
           java-version: '21'
 
-      - name: Build and generate coverage
-        run: mvn clean verify
-
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
-            -Dsonar.projectName=${{ vars.SONAR_PROJECT_NAME }}
-            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
-            -Dsonar.java.binaries=**/target
-            -Dsonar.coverage.jacoco.xmlReportPaths=${{ needs.unit-test.outputs.coverage-report }}
-            -Dsonar.coverage.exclusions=**/test/**
+        run: |
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }} \
+            -Dsonar.projectName=${{ vars.SONAR_PROJECT_NAME }} \
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }} \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
       - name: Wait and Enforce Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@master
@@ -68,13 +59,14 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           pollingTimeoutSec: 600
+          scanMetadataReportFile: target/sonar/report-task.txt
 
   build-and-push:
     needs:
       - unit-test
       - sonar-quality
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || github.event.name == 'workflow_dispatch' }}
 
     steps:
       - name: Checkout Repository
@@ -111,7 +103,7 @@ jobs:
   deploy-eks:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || github.event.name == 'workflow_dispatch' }}
 
     steps:
       - name: Checkout Repository
