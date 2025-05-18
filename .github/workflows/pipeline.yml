@@ -61,14 +61,13 @@ jobs:
             -Dsonar.coverage.jacoco.xmlReportPaths=${{ needs.unit-test.outputs.coverage-report }}
             -Dsonar.coverage.exclusions=**/test/**
 
-      - name: Enforce Quality Gate
-        run: |
-          wget -q -O qualitygate.out "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=${{ secrets.SONAR_PROJECT_KEY }}&token=${{ secrets.SONAR_TOKEN }}"
-          STATUS=$(jq -r .projectStatus.status qualitygate.out)
-          if [ "$STATUS" != "OK" ]; then
-            echo "Quality Gate failed: $STATUS"
-            exit 1
-          fi
+      - name: Wait and Enforce Quality Gate
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          pollingTimeoutSec: 600
 
   build-and-push:
     needs:
