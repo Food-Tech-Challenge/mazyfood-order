@@ -12,8 +12,6 @@ on:
 jobs:
   unit-test:
     runs-on: ubuntu-latest
-    outputs:
-      coverage-report: ${{ steps.jacoco.outputs.report-path }}
 
     steps:
       - name: Checkout Repository
@@ -26,17 +24,9 @@ jobs:
           java-version: '21'
           cache: maven
 
-      - name: Build, Test and Generate JaCoCo Report
-        id: jacoco
+      - name: Build and Test Application
         run: |
-          mvn clean verify
-          echo "report-path=bootstrap/target/jacoco-aggregate/jacoco.xml" >> $GITHUB_OUTPUT
-
-      - name: Save target/ for Sonar
-        uses: actions/upload-artifact@v4
-        with:
-          name: maven-target
-          path: '**/target'
+          mvn test
 
   sonar-quality:
     name: SonarQube Analysis
@@ -53,10 +43,8 @@ jobs:
           distribution: 'corretto'
           java-version: '21'
 
-      - name: Restore target/ directory
-        uses: actions/download-artifact@v4
-        with:
-          name: maven-target
+      - name: Build and generate coverage
+        run: mvn clean verify
 
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v2
@@ -69,7 +57,7 @@ jobs:
             -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
             -Dsonar.projectName=${{ vars.SONAR_PROJECT_NAME }}
             -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
-            -Dsonar.java.binaries=target
+            -Dsonar.java.binaries=**/target
             -Dsonar.coverage.jacoco.xmlReportPaths=${{ needs.unit-test.outputs.coverage-report }}
             -Dsonar.coverage.exclusions=**/test/**
 
