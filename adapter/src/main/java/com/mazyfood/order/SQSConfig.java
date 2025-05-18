@@ -3,10 +3,12 @@ package com.mazyfood.order;
 import io.awspring.cloud.sqs.operations.SqsTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
 @Configuration
+@Profile("!test")
 public class SQSConfig {
 
     @Bean
@@ -20,7 +22,4 @@ public class SQSConfig {
     public SqsTemplate sqsTemplate(SqsAsyncClient sqsAsyncClient){
         return SqsTemplate.builder().sqsAsyncClient(sqsAsyncClient).build();
     }
-
 }
-
-
