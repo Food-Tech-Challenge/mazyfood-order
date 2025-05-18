@@ -1,5 +1,6 @@
 package com.mazyfood.order.application.service.order.payment;
 
+import com.mazyfood.order.application.port.in.order.OrderNotFoundException;
 import com.mazyfood.order.application.port.in.order.payment.PayOrderUseCase;
 import com.mazyfood.order.application.port.out.PaymentGateway;
 import com.mazyfood.order.application.port.out.persistence.OrderRepository;
@@ -20,8 +21,8 @@ public class PayOrderService implements PayOrderUseCase {
     }
 
     @Override
-    public String processPayment(OrderId orderId, String paymentMethod) throws OrderPaymentException {
-        Order order = orderRepository.findById(orderId).get();
+    public String processPayment(OrderId orderId, String paymentMethod) throws OrderPaymentException, OrderNotFoundException {
+        Order order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
         if (order.getStatus() != OrderStatus.INICIADO) {
             throw new OrderPaymentException("Order cannot be paid");
         }

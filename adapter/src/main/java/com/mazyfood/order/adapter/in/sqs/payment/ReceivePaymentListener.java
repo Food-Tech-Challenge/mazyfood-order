@@ -2,6 +2,7 @@ package com.mazyfood.order.adapter.in.sqs.payment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mazyfood.order.application.port.in.order.OrderNotFoundException;
 import com.mazyfood.order.application.port.in.order.payment.ReceiveOrderPaymentUseCase;
 import com.mazyfood.order.application.service.order.payment.OrderPaymentException;
 import com.mazyfood.order.model.order.OrderId;
@@ -22,7 +23,7 @@ public class ReceivePaymentListener {
     }
 
     @SqsListener("${events.queues.payment-status}")
-    public void processPayment(String message) throws JsonProcessingException, OrderPaymentException {
+    public void processPayment(String message) throws JsonProcessingException, OrderPaymentException, OrderNotFoundException {
         if (isNullOrEmpty(message)) {
             throw new IllegalArgumentException("Message is empty!");
         }
