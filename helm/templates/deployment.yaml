@@ -18,6 +18,13 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 200m
+            requests:
+              memory: 100Mi
+              cpu: 100m
           ports:
             - containerPort: 80
           env:
@@ -68,3 +75,4 @@ spec:
                 configMapKeyRef:
                   name: {{ .Chart.Name }}-config
                   key: PAYMENT_GATEWAY
+      automountServiceAccountToken: false
