@@ -1,21 +1,18 @@
 package com.mazyfood.order.application.service.order.payment;
 
+import com.mazyfood.order.application.port.in.order.OrderNotFoundException;
 import com.mazyfood.order.application.port.out.PaymentGateway;
 import com.mazyfood.order.application.port.out.persistence.OrderRepository;
 import com.mazyfood.order.model.order.Order;
 import com.mazyfood.order.model.order.OrderId;
 import com.mazyfood.order.model.order.OrderStatus;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class PayOrderServiceTest {
@@ -24,69 +21,73 @@ class PayOrderServiceTest {
     private PaymentGateway paymentGateway;
     private PayOrderService payOrderService;
 
-    private OrderId orderId;
-    private Order order;
-
     @BeforeEach
     void setUp() {
         orderRepository = mock(OrderRepository.class);
         paymentGateway = mock(PaymentGateway.class);
         payOrderService = new PayOrderService(orderRepository, paymentGateway);
-
-        orderId = new OrderId(1);
-        order = mock(Order.class);
     }
 
     @Test
-    void testProcessPaymentWhenOrderIsInitiated() throws Exception {
-        when(order.getStatus()).thenReturn(OrderStatus.INICIADO);
+    void testProcessPaymentSuccess() throws Exception {
+        OrderId orderId = new OrderId(1);
+        Order order = new Order(123);
+        order.setId(orderId);
+        order.addProduct(1, "Refri", new BigDecimal("50.00"), 1); // total = 50.00
+
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        when(paymentGateway.requestPayment(orderId, new BigDecimal("50.00"), "PIX")).thenReturn(true);
 
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getScheme()).thenReturn("http");
-        when(request.getServerName()).thenReturn("localhost");
-        when(request.getServerPort()).thenReturn(8080);
+        String result = payOrderService.processPayment(orderId, "PIX");
 
-        RequestAttributes attributes = mock(RequestAttributes.class);
-        when(attributes.resolveReference(RequestAttributes.REFERENCE_REQUEST)).thenReturn(request);
-
-        try (MockedStatic<RequestContextHolder> mocked = mockStatic(RequestContextHolder.class)) {
-            mocked.when(RequestContextHolder::getRequestAttributes).thenReturn(attributes);
-
-            String result = payOrderService.processPayment(orderId, "pix");
-
-            verify(paymentGateway).authorizePayment(eq(orderId), eq("http://localhost:8080/orders/payment"));
-            assertEquals("Processing order payment", result);
-        }
+        assertEquals("Order payment requested successfully", result);
+        verify(paymentGateway).requestPayment(orderId, new BigDecimal("50.00"), "PIX");
     }
 
     @Test
-    void testProcessPaymentThrowsExceptionIfOrderIsNotInitiated() {
-        when(order.getStatus()).thenReturn(OrderStatus.RECEBIDO);
-        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+    void testProcessPaymentFails() throws Exception {
+        OrderId orderId = new OrderId(2);
+        Order order = new Order(456);
+        order.setId(orderId);
+        order.setStatus(OrderStatus.INICIADO);
+        order.addProduct(99, "Burger", new BigDecimal("30.00"), 1); // total: 30.00
 
-        assertThrows(OrderPaymentException.class, () -> {
-            payOrderService.processPayment(orderId, "pix");
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        when(paymentGateway.requestPayment(orderId, new BigDecimal("30.00"), "CREDIT_CARD")).thenReturn(false);
+
+        String result = payOrderService.processPayment(orderId, "CREDIT_CARD");
+
+        assertEquals("Order payment request failed", result);
+        verify(paymentGateway).requestPayment(orderId, new BigDecimal("30.00"), "CREDIT_CARD");
+    }
+
+    @Test
+    void testProcessPaymentThrowsOrderNotFoundException() {
+        OrderId orderId = new OrderId(99);
+
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+
+        assertThrows(OrderNotFoundException.class, () -> {
+            payOrderService.processPayment(orderId, "PIX");
         });
 
-        verify(paymentGateway, never()).authorizePayment(any(), any());
+        verify(paymentGateway, never()).requestPayment(any(), any(), any());
     }
 
     @Test
-    void testProcessPaymentThrowsExceptionIfNoHttpRequestAvailable() {
-        when(order.getStatus()).thenReturn(OrderStatus.INICIADO);
+    void testProcessPaymentThrowsOrderPaymentExceptionForInvalidStatus() {
+        OrderId orderId = new OrderId(3);
+        Order order = new Order(789);
+        order.setId(orderId);
+        order.setStatus(OrderStatus.PRONTO);
+
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 
-        try (MockedStatic<RequestContextHolder> mocked = mockStatic(RequestContextHolder.class)) {
-            mocked.when(RequestContextHolder::getRequestAttributes).thenReturn(null);
+        OrderPaymentException exception = assertThrows(OrderPaymentException.class, () -> {
+            payOrderService.processPayment(orderId, "PIX");
+        });
 
-            IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
-                payOrderService.processPayment(orderId, "pix");
-            });
-
-            assertEquals("Request is not available in the current context", exception.getMessage());
-        }
-
-        verify(paymentGateway, never()).authorizePayment(any(), any());
+        assertEquals("Order cannot be paid", exception.getMessage());
+        verify(paymentGateway, never()).requestPayment(any(), any(), any());
     }
 }
