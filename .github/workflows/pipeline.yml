@@ -142,7 +142,7 @@ jobs:
       - name: Deploy Application with Helm
         run: |
           helm upgrade --install "${{ vars.HELM_RELEASE_NAME }}" helm/ \
-            --set image.repository=$(aws sts.get-caller-identity --query Account --output text).dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPOSITORY }} \
+            --set image.repository=$(aws sts get-caller-identity --query Account --output text).dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ vars.ECR_REPOSITORY }} \
             --set image.tag="${{ vars.IMAGE_TAG }}" \
             --set database.url="${{ vars.DATABASE_URL }}" \
             --set database.username="${{ secrets.DATABASE_USERNAME }}" \
