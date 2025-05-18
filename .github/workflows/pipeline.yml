@@ -17,7 +17,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
 
     steps:
       - name: Checkout Repository
@@ -36,7 +36,7 @@ jobs:
                -Daws.accessKeyId=${{ secrets.AWS_ACCESS_KEY_ID }} \
                -Daws.secretAccessKey=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
                -Daws.sessionToken=${{ secrets.AWS_SESSION_TOKEN }} \
-               -Daws.region=${{ secrets.AWS_REGION }}
+               -Daws.region=${{ vars.AWS_REGION }}
 
   sonar-quality:
     name: SonarQube Analysis
