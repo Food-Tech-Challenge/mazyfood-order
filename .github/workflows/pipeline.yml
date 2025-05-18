@@ -32,6 +32,12 @@ jobs:
           mvn clean verify
           echo "report-path=bootstrap/target/jacoco-aggregate/jacoco.xml" >> $GITHUB_OUTPUT
 
+      - name: Save target/ for Sonar
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-target
+          path: '**/target'
+
   sonar-quality:
     name: SonarQube Analysis
     needs: unit-test
@@ -46,6 +52,11 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '21'
+
+      - name: Restore target/ directory
+        uses: actions/download-artifact@v4
+        with:
+          name: maven-target
 
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v2
