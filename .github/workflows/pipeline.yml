@@ -47,14 +47,16 @@ jobs:
           distribution: 'corretto'
           java-version: '21'
 
-      - name: SonarQube Scanner
-        uses: SonarSource/sonarqube-scan-action@v2
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
-          sonar-token: ${{ secrets.SONAR_TOKEN }}
-          sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
-          project-key: "${{ vars.SONAR_PROJECT_KEY }}"
-          project-name: "${{ vars.SONAR_PROJECT_NAME }}"
-          extra-args: |
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.projectName=${{ vars.SONAR_PROJECT_NAME }}
             -Dsonar.java.binaries=target
             -Dsonar.coverage.jacoco.xmlReportPaths=${{ needs.unit-test.outputs.coverage-report }}
             -Dsonar.coverage.exclusions=**/test/**
