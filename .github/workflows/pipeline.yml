@@ -26,7 +26,11 @@ jobs:
 
       - name: Build and Test Application
         run: |
-          mvn test
+          mvn test \
+               -Daws.accessKeyId=${{ secrets.AWS_ACCESS_KEY_ID }} \
+               -Daws.secretAccessKey=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+               -Daws.sessionToken=${{ secrets.AWS_SESSION_TOKEN }} \
+               -Daws.region=${{ secrets.AWS_REGION }}
 
   sonar-quality:
     name: SonarQube Analysis
