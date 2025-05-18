@@ -8,7 +8,7 @@ import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsPro
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 
 @Configuration
-@Profile("!test")
+@Profile("postgresql")
 public class SQSConfig {
 
     @Bean
