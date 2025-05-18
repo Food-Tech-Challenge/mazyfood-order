@@ -32,4 +32,3 @@ jpa:
 
 custom:
   persistence: postgresql
-  paymentGateway: mock

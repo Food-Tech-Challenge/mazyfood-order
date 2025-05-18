@@ -138,4 +138,8 @@ jobs:
             --set image.tag="${{ vars.IMAGE_TAG }}" \
             --set database.url="${{ vars.DATABASE_URL }}" \
             --set database.username="${{ secrets.DATABASE_USERNAME }}" \
-            --set database.password="${{ secrets.DATABASE_PASSWORD }}"
+            --set database.password="${{ secrets.DATABASE_PASSWORD }}" \
+            --set aws.accessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            --set aws.secretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+            --set aws.sessionToken="${{ secrets.AWS_SESSION_TOKEN }}" \
+            --set aws.region="${{ vars.AWS_REGION }}"
