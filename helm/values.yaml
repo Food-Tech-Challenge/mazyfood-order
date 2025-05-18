@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  repository: localhost:5000/mazyfood
+  repository: localhost:5000/mazyfood-order
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -20,9 +20,9 @@ springBoot:
   activeProfile: postgresql
 
 database:
-  url: jdbc:postgresql://host.minikube.internal:5432/mazyfood
-  username: mazyadmin
-  password: mazyadmin
+  url: jdbc:postgresql://host.minikube.internal:5432/mazyfood_order
+  username: mazyfood_order
+  password: mazyfood_order
   driverClassName: org.postgresql.Driver
 
 jpa:

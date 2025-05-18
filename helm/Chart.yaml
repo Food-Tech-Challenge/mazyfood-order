@@ -1,6 +1,6 @@
 apiVersion: v2
-name: mazyfood
-description: A Helm chart for deploying MAZYFood API
+name: mazyfood-order
+description: A Helm chart for deploying MAZYFood Order API
 type: application
 version: 1.0.0
 appVersion: "1.0.0"
