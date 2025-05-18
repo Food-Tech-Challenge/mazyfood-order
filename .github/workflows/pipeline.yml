@@ -66,7 +66,7 @@ jobs:
       - unit-test
       - sonar-quality
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || github.event.name == 'workflow_dispatch' }}
 
     steps:
       - name: Checkout Repository
@@ -103,7 +103,7 @@ jobs:
   deploy-eks:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' || github.event.name == 'workflow_dispatch' }}
 
     steps:
       - name: Checkout Repository
