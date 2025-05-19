@@ -1,5 +1,6 @@
 package com.mazyfood.order.adapter.in.rest.order.payment;
 
+import com.mazyfood.order.application.port.in.order.OrderNotFoundException;
 import com.mazyfood.order.application.port.in.order.payment.PayOrderUseCase;
 import com.mazyfood.order.application.service.order.payment.OrderPaymentException;
 import com.mazyfood.order.model.order.OrderId;
@@ -22,7 +23,7 @@ public class PayOrderController {
         PaymentResponseModel paymentResponseModel;
         try {
             paymentStatus = payOrderUseCase.processPayment(orderId, paymentRequestModel.paymentMethod());
-        } catch (OrderPaymentException e) {
+        } catch (OrderPaymentException | OrderNotFoundException e) {
             paymentResponseModel = new PaymentResponseModel(e.getMessage());
             return ResponseEntity.badRequest().body(paymentResponseModel);
         }

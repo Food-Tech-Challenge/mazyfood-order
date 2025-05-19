@@ -94,4 +94,18 @@ public class OrderTest {
             products.add(mock(OrderProduct.class));
         });
     }
+
+    @Test
+    void testGetTotalCalculatesCorrectSum() {
+        Order order = new Order(123);
+
+        order.addProduct(1, "X-Burguer", new BigDecimal("10.00"), 2);
+        order.addProduct(2, "Batata", new BigDecimal("5.50"), 3);
+
+        BigDecimal expectedTotal = new BigDecimal("36.50");
+        BigDecimal actualTotal = order.getTotal();
+
+        assertEquals(0, expectedTotal.compareTo(actualTotal), "O total calculado não está correto.");
+    }
+
 }
