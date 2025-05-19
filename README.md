@@ -1,4 +1,8 @@
 # mazyfood-order
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Food-Tech-Challenge_mazyfood-order&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Food-Tech-Challenge_mazyfood-order)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Food-Tech-Challenge_mazyfood-order&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Food-Tech-Challenge_mazyfood-order)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Food-Tech-Challenge_mazyfood-order&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Food-Tech-Challenge_mazyfood-order)
+
 
 Tech Challenge Fast Food desenvolvido no curso de Pós-Graduação em Arquitetura de Software na Pós-Tech FIAP.
 
@@ -7,10 +11,10 @@ Tech Challenge Fast Food desenvolvido no curso de Pós-Graduação em Arquitetur
 ## Sumário
 
 1. [Sobre o Projeto](#sobre-o-projeto)
-2. [Tecnologias Utilizadas](#tecnologias-utilizadas)
-3. [Pré-requisitos](#pré-requisitos)
-4. [Como Executar Localmente](#como-executar-localmente)
-5. [Documentação e Acesso](#documentação-e-acesso)
+2. [Qualidade do código](#qualidade-do-codigo)
+3. [Tecnologias Utilizadas](#tecnologias-utilizadas)
+4. [Pré-requisitos](#pré-requisitos)
+5. [Como Executar Localmente](#como-executar-localmente)
 6. [Autores](#autores)
 
 ---
@@ -23,6 +27,19 @@ garantir maior desacoplamento e facilidade de manutenção. Além da API em Spri
 **PostgreSQL** e filas **SQS**. Este projeto tem como objetivo oferecer uma base sólida para estudos e aplicação prática
 de conceitos
 avançados em arquitetura de software com foco em microsserviços.
+
+---
+
+## Qualidade do Código
+
+### Testes unitários
+![Testes Unitários](./assets/testes.png)
+
+### SonarQube
+![Sonar_1](./assets/sonar.png)
+
+### Cobertura de Testes
+![Cobertura de Testes](./assets/jacoco.png)
 
 ---
 
