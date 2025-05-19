@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/orders")
@@ -39,12 +40,16 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable int id) {
         OrderId orderId = new OrderId(id);
-        Order order = null;
+        Optional<Order> optionalOrder;
         try {
-            order = getOrderUseCase.getOrder(orderId).get();
+            optionalOrder = getOrderUseCase.getOrder(orderId);
+            if (optionalOrder.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
         } catch (OrderNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+        Order order = optionalOrder.get();
         return ResponseEntity.ok(OrderResponse.fromDomain(order));
     }
 

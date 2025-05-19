@@ -1,5 +1,6 @@
 package com.mazyfood.order.application.service.order.payment;
 
+import com.mazyfood.order.application.port.in.order.OrderNotFoundException;
 import com.mazyfood.order.application.port.out.persistence.OrderRepository;
 import com.mazyfood.order.model.order.Order;
 import com.mazyfood.order.model.order.OrderId;
@@ -29,7 +30,7 @@ class ReceiveOrderPaymentServiceTest {
     }
 
     @Test
-    void testReceivePaymentWhenAuthorizedAndOrderIsInitiated() throws OrderPaymentException {
+    void testReceivePaymentWhenAuthorizedAndOrderIsInitiated() throws OrderPaymentException, OrderNotFoundException {
         when(order.getStatus()).thenReturn(OrderStatus.INICIADO);
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 
@@ -40,7 +41,7 @@ class ReceiveOrderPaymentServiceTest {
     }
 
     @Test
-    void testReceivePaymentWhenNotAuthorizedDoesNotChangeStatus() throws OrderPaymentException {
+    void testReceivePaymentWhenNotAuthorizedDoesNotChangeStatus() throws OrderPaymentException, OrderNotFoundException {
         when(order.getStatus()).thenReturn(OrderStatus.INICIADO);
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
 

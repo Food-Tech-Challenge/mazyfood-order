@@ -36,4 +36,12 @@ public class Order {
                 .computeIfAbsent(productId, ignored -> new OrderProduct(productId, productName, price))
                 .increaseQuantityBy(quantity);
     }
+
+    public BigDecimal getTotal() {
+        BigDecimal total = BigDecimal.ZERO;
+        for (OrderProduct product : products.values()) {
+            total = total.add(product.getTotal());
+        }
+        return total;
+    }
 }

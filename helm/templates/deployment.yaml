@@ -70,9 +70,19 @@ spec:
                 configMapKeyRef:
                   name: {{ .Chart.Name }}-config
                   key: PERSISTENCE
-            - name: PAYMENT_GATEWAY
+            - name: AWS_ACCESS_KEY_ID
               valueFrom:
-                configMapKeyRef:
-                  name: {{ .Chart.Name }}-config
-                  key: PAYMENT_GATEWAY
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-secret
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-secret
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_SESSION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Chart.Name }}-secret
+                  key: AWS_SESSION_TOKEN
       automountServiceAccountToken: false

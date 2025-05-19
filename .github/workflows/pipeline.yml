@@ -13,6 +13,12 @@ jobs:
   unit-test:
     runs-on: ubuntu-latest
 
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -26,12 +32,22 @@ jobs:
 
       - name: Build and Test Application
         run: |
-          mvn test
+          mvn test \
+               -Daws.accessKeyId=${{ secrets.AWS_ACCESS_KEY_ID }} \
+               -Daws.secretAccessKey=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+               -Daws.sessionToken=${{ secrets.AWS_SESSION_TOKEN }} \
+               -Daws.region=${{ vars.AWS_REGION }}
 
   sonar-quality:
     name: SonarQube Analysis
     needs: unit-test
     runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
 
     steps:
       - name: Checkout Repository
@@ -50,7 +66,11 @@ jobs:
             -Dsonar.projectName=${{ vars.SONAR_PROJECT_NAME }} \
             -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }} \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+            -Daws.accessKeyId=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            -Daws.secretAccessKey=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -Daws.sessionToken=${{ secrets.AWS_SESSION_TOKEN }} \
+            -Daws.region=${{ vars.AWS_REGION }}
 
       - name: Wait and Enforce Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@master
@@ -138,4 +158,8 @@ jobs:
             --set image.tag="${{ vars.IMAGE_TAG }}" \
             --set database.url="${{ vars.DATABASE_URL }}" \
             --set database.username="${{ secrets.DATABASE_USERNAME }}" \
-            --set database.password="${{ secrets.DATABASE_PASSWORD }}"
+            --set database.password="${{ secrets.DATABASE_PASSWORD }}" \
+            --set aws.accessKeyId="${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            --set aws.secretAccessKey="${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+            --set aws.sessionToken="${{ secrets.AWS_SESSION_TOKEN }}" \
+            --set aws.region="${{ vars.AWS_REGION }}"

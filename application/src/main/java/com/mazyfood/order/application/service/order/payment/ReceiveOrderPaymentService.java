@@ -1,5 +1,6 @@
 package com.mazyfood.order.application.service.order.payment;
 
+import com.mazyfood.order.application.port.in.order.OrderNotFoundException;
 import com.mazyfood.order.application.port.in.order.payment.ReceiveOrderPaymentUseCase;
 import com.mazyfood.order.application.port.out.persistence.OrderRepository;
 import com.mazyfood.order.model.order.Order;
@@ -14,8 +15,8 @@ public class ReceiveOrderPaymentService implements ReceiveOrderPaymentUseCase {
     }
 
     @Override
-    public void receivePayment(OrderId orderId, boolean authorized) throws OrderPaymentException {
-        Order order = orderRepository.findById(orderId).get();
+    public void receivePayment(OrderId orderId, boolean authorized) throws OrderPaymentException, OrderNotFoundException {
+        Order order = orderRepository.findById(orderId).orElseThrow(OrderNotFoundException::new);
         if (order.getStatus() != OrderStatus.INICIADO) {
             throw new OrderPaymentException("Order already paid.");
         }
