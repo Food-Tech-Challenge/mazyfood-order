@@ -60,7 +60,11 @@ jobs:
             -Dsonar.projectName=${{ vars.SONAR_PROJECT_NAME }} \
             -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }} \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+            -Daws.accessKeyId=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            -Daws.secretAccessKey=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            -Daws.sessionToken=${{ secrets.AWS_SESSION_TOKEN }} \
+            -Daws.region=${{ vars.AWS_REGION }}
 
       - name: Wait and Enforce Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@master
