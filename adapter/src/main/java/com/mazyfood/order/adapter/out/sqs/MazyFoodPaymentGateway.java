@@ -40,7 +40,7 @@ public class MazyFoodPaymentGateway implements PaymentGateway {
         return false;
     }
 
-    private String objectToString(Object object) throws JsonProcessingException {
+    String objectToString(Object object) throws JsonProcessingException {
         var objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         return objectMapper.writeValueAsString(object);
