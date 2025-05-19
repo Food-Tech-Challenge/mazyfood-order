@@ -15,7 +15,7 @@ Tech Challenge Fast Food desenvolvido no curso de Pós-Graduação em Arquitetur
 3. [Tecnologias Utilizadas](#tecnologias-utilizadas)
 4. [Pré-requisitos](#pré-requisitos)
 5. [Como Executar Localmente](#como-executar-localmente)
-6. [Autores](#autores)
+6. [Participantes](#participantes)
 
 ---
 
