@@ -26,6 +26,7 @@
         <module>model</module>
         <module>adapter</module>
         <module>bootstrap</module>
+        <module>bdd</module>
     </modules>
     <scm>
         <connection/>
