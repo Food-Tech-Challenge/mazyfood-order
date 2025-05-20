@@ -31,4 +31,8 @@ public class OrderProductJpaEntity {
     public boolean isQuantityPositive() {
         return quantity > 0;
     }
+
+    public boolean nonCoveredMethod() {
+        return quantity >= 0;
+    }
 }
