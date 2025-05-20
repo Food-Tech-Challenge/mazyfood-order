@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY pom.xml pom.xml
 COPY bootstrap/pom.xml bootstrap/pom.xml
+COPY bdd/pom.xml bdd/pom.xml
 COPY model/pom.xml model/pom.xml
 COPY adapter/pom.xml adapter/pom.xml
 COPY application/pom.xml application/pom.xml
